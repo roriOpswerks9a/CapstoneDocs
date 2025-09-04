@@ -1,0 +1,11 @@
+/* Change navigation background color */
+.md-header, 
+.md-tabs {
+  background-color: #005f3e !important;
+}
+
+/* Optional: change nav link hover/focus color */
+.md-nav__link:hover, 
+.md-nav__link:focus {
+  color: #ffffff !important;
+}
