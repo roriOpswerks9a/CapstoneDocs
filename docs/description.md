@@ -9,7 +9,7 @@ Our team has developed a **CI/CD solution** that integrates four key tools acros
 
 This separation keeps production clean: builds and tests run outside the cluster, while deployments and traffic management stay inside Kubernetes.
 
-The web application is a **Java-based project** (chosen because of its natural compatibility with TeamCity). It is containerized with Docker, versioned through GitHub, and deployed into Kubernetes.
+The web application is a **Python-based project** (chosen because of its natural compatibility with TeamCity). It is containerized with Docker, versioned through GitHub, and deployed into Kubernetes.
 
 ## Deployment Strategy: Canary Release Model
 

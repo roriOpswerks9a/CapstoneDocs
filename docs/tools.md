@@ -75,17 +75,25 @@ The figure below illustrates the end-to-end workflow of our CI/CD pipeline:
 
 ### 4. Jenkins Build 
 - Merges trigger Jenkins to:
-    - Build a Docker image.
-    - Tag the image with:
-        - `:buildNumber-hash` (e.g., 42-a1b2c3d) → unique, traceable version.
-        - `:latest` → always points to the newest successful build.
-    - Push both tags to Docker Hub.
+    <ul>
+    <li style="list-style-type: square;">Build a Docker image.</li>
+    <li style="list-style-type: square;">Tag the image with:</li>
+    <ul>
+    <li style="list-style-type: circle;">`:buildNumber-hash` (e.g., 42-a1b2c3d) → unique, traceable version.</li>
+    <li style="list-style-type: circle;">`:latest` → always points to the newest successful build.</li>
+    </ul>
+    </ul>
+    <ul>
+    <li style="list-style-type: square;">Push both tags to Docker Hub.</li>
+    </ul>
 
 ### 5. Spinnaker Deployment
 - Spinnaker detects the new image.
 - Deploys it to Kubernetes with a **canary rollout**:
-    - Canary pods → test stability.
-    - If successful → promote to all pods (stable).
+    <ul>
+    <li style="list-style-type: square;">Canary pods → test stability.</li>
+    <li style="list-style-type: square;">If successful → promote to all pods (stable).</li>
+    </ul>
 
 ### 6. Prometheus Monitoring
 - Prometheus collects metrics (pod health, latency, error rates).
