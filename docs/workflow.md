@@ -52,77 +52,59 @@ Our Jenkins pipeline automates image building and pushing to Docker Hub. Below i
 
 ```groovy title=""
 pipeline {
-agent { label 'i9a-builder' }
-options { timestamps() }
-```
+  agent { label 'i9a-builder' }                 
+  options { timestamps() }
 
-```groovy title=""
-environment {
-IMAGE = 'afk24cmd/miniapp'
-TAG = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
-SPINNAKER_WEBHOOK = 'https://spinnaker-api.example.com/webhooks/webhook/my-pipeline'
-}
-```
+  environment {
+    IMAGE = 'vverzosa/miniapp'             // change
+    TAG   = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
+  }
 
-```groovy title=""
-stages {
-stage('Checkout') {
-steps { checkout scm }
-}
-}
-```
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
 
-```groovy title=""
-stage('Docker Login') {
-steps {
-withCredentials([usernamePassword(
-credentialsId: 'dockerhub-creds',
-usernameVariable: 'DHU',
-passwordVariable: 'DHP'
-)]) {
-sh 'echo "$DHP" | docker login -u "$DHU" --password-stdin'
-}
-}
-}
-```
+    stage('Docker Login') {
+      steps {
+        withCredentials([usernamePassword(
+          credentialsId: 'dockerhub-creds',
+          usernameVariable: 'DHU',
+          passwordVariable: 'DHP'
+        )]) {
+          sh 'echo "$DHP" | docker login -u "$DHU" --password-stdin'
+        }
+      }
+    }
 
-```groovy title=""
-stage('Build Image') {
-steps {
-sh 'docker build -t $IMAGE:$TAG -t $IMAGE:latest .'
-}
-}
-```
+    stage('Build Image') {
+      steps {
+        // Build once and apply both tags locally
+        sh 'docker build -t $IMAGE:$TAG -t $IMAGE:latest .'
+      }
+    }
 
-```groovy title=""
-stage('Build Image') {
-steps {
-sh 'docker build -t $IMAGE:$TAG -t $IMAGE:latest .'
-}
-}
-```
+    stage('Push Image') {
+      steps {
+        sh '''
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
+        '''
+      }
+    }
+  }
 
-```groovy title=""
-stage('Trigger Spinnaker') {
-steps {
-sh 'curl -X POST -H "Content-Type: application/json" \\
--d "{\\\"artifacts\\\":[{\\\"type\\\":\\\"docker/image\\\",\\\"reference\\\":\\\"$IMAGE:$TAG\\\"}]}" $SPINNAKER_WEBHOOK'
-}
-}
-}
-```
-
-```groovy title=""
-post {
-always {
-sh 'docker logout || true'
-}
-success {
-echo "✅ Pushed $IMAGE:$TAG and $IMAGE:latest and notified Spinnaker"
-}
-failure {
-echo "❌ Build/push failed — check logs."
-}
+  post {
+    always {
+      sh 'docker logout || true'
+    }
+    success {
+      echo "✅ Pushed $IMAGE:$TAG and $IMAGE:latest"
+    }
+    failure {
+      echo "❌ Build/push failed — check logs."
+    }
+  }
 }
 ```
 
