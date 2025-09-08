@@ -9,7 +9,7 @@
 
 ## TeamCity
 - Acts as our **Continuous Integration** system.  
-- Builds the **Java app**, runs automated unit tests, and reports results.  
+- Builds the **Python app**, runs automated unit tests, and reports results.  
 - Provides status checks that must pass before merging **PRs**.  
 
 ---
